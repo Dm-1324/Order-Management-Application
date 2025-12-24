@@ -4,6 +4,7 @@ import com.example.orderManagementApplication.dto.UserInputDto;
 import com.example.orderManagementApplication.dto.UserOrderDto;
 import com.example.orderManagementApplication.dto.UserOutputDto;
 import com.example.orderManagementApplication.entity.User;
+import com.example.orderManagementApplication.entity.enums.OrderStatus;
 import com.example.orderManagementApplication.entity.enums.UserStatus;
 import com.example.orderManagementApplication.exception.ResourceNotFoundException;
 import com.example.orderManagementApplication.mapper.EntityDtoMapper;
@@ -54,5 +55,17 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         return entityDtoMapper.toUserOrderDto(user);
+    }
+
+    @Override
+    public Boolean checkUserInactivityStatus(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        long cancelledCount = user.getOrders().stream()
+                .filter(x -> x.getOrderStatus() == OrderStatus.CANCELLED)
+                .count();
+        
+        return cancelledCount > 2;
     }
 }

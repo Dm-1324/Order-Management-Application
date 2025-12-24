@@ -17,4 +17,6 @@ public interface UserService {
     List<UserOutputDto> getAllUsers();
 
     UserOrderDto getUserWithOrders(Long userId);
+
+    Boolean checkUserInactivityStatus(Long userId);
 }

@@ -15,5 +15,5 @@ public class UserOrderDto {
 
     private UserStatus userStatus;
 
-    private List<OrderPartialDto> orderPartialDto;
+    private List<OrderPartialDto> userOrderData;
 }

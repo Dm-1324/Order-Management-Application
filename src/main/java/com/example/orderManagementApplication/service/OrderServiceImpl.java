@@ -29,12 +29,14 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CouponRepository couponRepository;
     private final EntityDtoMapper entityDtoMapper;
+    private final UserService userService;
 
-    public OrderServiceImpl(UserRepository userRepository, OrderRepository orderRepository, CouponRepository couponRepository, EntityDtoMapper entityDtoMapper) {
+    public OrderServiceImpl(UserRepository userRepository, OrderRepository orderRepository, CouponRepository couponRepository, EntityDtoMapper entityDtoMapper, UserService userService) {
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.couponRepository = couponRepository;
         this.entityDtoMapper = entityDtoMapper;
+        this.userService = userService;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = Order.builder()
                 .orderNumber("ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .date(LocalDateTime.now())
-                .orderStatus(OrderStatus.CREATED)
+                .orderStatus(OrderStatus.PENDING)
                 .originalTotal(originalAmount)
                 .totalAmount(finalAmount)
                 .user(user)
@@ -97,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
         User user = order.getUser();
 
         if (user.getUserStatus() == UserStatus.INACTIVE) {
-            throw new InvalidStatusChangeException("Status cannot be change, the user is inactive");
+            throw new InvalidStatusChangeException("Status cannot be changed, the user is inactive");
         }
         if (order.getOrderStatus() == OrderStatus.CANCELLED) {
             throw new InvalidStatusChangeException("Cannot change order status of a cancelled order.");
@@ -109,8 +111,17 @@ public class OrderServiceImpl implements OrderService {
             throw new InvalidStatusChangeException("Only pending order can be changed to Confirmed");
         }
 
+
         order.setOrderStatus(newOrderStatus);
         Order updatedOrder = orderRepository.save(order);
+
+        if (newOrderStatus == OrderStatus.CANCELLED) {
+            Boolean check = userService.checkUserInactivityStatus(user.getId());
+            if (check == true) {
+                user.setUserStatus(UserStatus.INACTIVE);
+                userRepository.save(user);
+            }
+        }
         return entityDtoMapper.toOrderOutputDto(updatedOrder);
     }
 }

@@ -63,11 +63,11 @@ public class EntityDtoMapper {
                 .originalTotal(order.getOriginalTotal())
                 .totalAmount(order.getTotalAmount())
                 .userName(order.getUser() != null ? order.getUser().getName() : null)
-                .appliedCoupons(mapCouponsToDtos(order.getCoupons()))
+                .appliedCoupons(mapCouponsToDto(order.getCoupons()))
                 .build();
     }
 
-    private Set<CouponDto> mapCouponsToDtos(Set<Coupon> coupons) {
+    private Set<CouponDto> mapCouponsToDto(Set<Coupon> coupons) {
         if (coupons == null || coupons.isEmpty()) {
             return Collections.emptySet();
         }
@@ -102,7 +102,7 @@ public class EntityDtoMapper {
                 .id(user.getId())
                 .name(user.getName())
                 .userStatus(user.getUserStatus())
-                .orderPartialDto(listOrderPartialDto)
+                .userOrderData(listOrderPartialDto)
                 .build();
     }
 }
