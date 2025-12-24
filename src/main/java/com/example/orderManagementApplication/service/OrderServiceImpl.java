@@ -13,6 +13,7 @@ import com.example.orderManagementApplication.mapper.EntityDtoMapper;
 import com.example.orderManagementApplication.repository.CouponRepository;
 import com.example.orderManagementApplication.repository.OrderRepository;
 import com.example.orderManagementApplication.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderOutputDto placeOrder(OrderInputDto inputDto) {
         User user = userRepository.findById(inputDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + inputDto.getUserId()));
@@ -95,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderOutputDto updateOrderStatus(Long id, OrderStatus newOrderStatus) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
