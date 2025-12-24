@@ -16,6 +16,7 @@ import com.example.orderManagementApplication.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
 
         BigDecimal originalAmount = inputDto.getTotalAmount();
         BigDecimal finalAmount = originalAmount;
+        BigDecimal totalDiscountValue = BigDecimal.ZERO;
 
         Set<Coupon> coupons = new HashSet<>();
         if (inputDto.getCouponIds() != null && !inputDto.getCouponIds().isEmpty()) {
@@ -53,9 +55,10 @@ public class OrderServiceImpl implements OrderService {
         }
 
         for (Coupon coupon : coupons) {
-            BigDecimal discount = finalAmount.multiply(BigDecimal.valueOf(coupon.getDiscountPercentage() / 100));
-            finalAmount = finalAmount.subtract(discount);
+            totalDiscountValue = totalDiscountValue.add(BigDecimal.valueOf(coupon.getDiscountPercentage()));
         }
+        BigDecimal discount = finalAmount.multiply((totalDiscountValue).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+        finalAmount = finalAmount.subtract(discount);
 
         Order order = Order.builder()
                 .orderNumber("ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
