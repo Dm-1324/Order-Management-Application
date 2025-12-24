@@ -15,8 +15,9 @@ public class OrderOutputDto {
     private String orderNumber;
     private LocalDateTime date;
     private OrderStatus orderStatus;
+    private BigDecimal originalTotal;
     private BigDecimal totalAmount;
-    
+
     private String userName;
     private Set<CouponDto> appliedCoupons;
 }

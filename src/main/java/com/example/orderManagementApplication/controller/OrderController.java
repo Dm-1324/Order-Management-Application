@@ -2,6 +2,7 @@ package com.example.orderManagementApplication.controller;
 
 import com.example.orderManagementApplication.dto.OrderInputDto;
 import com.example.orderManagementApplication.dto.OrderOutputDto;
+import com.example.orderManagementApplication.entity.enums.OrderStatus;
 import com.example.orderManagementApplication.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,11 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<OrderOutputDto> getOrderById(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.getOrderById(id));
+    }
+
+    @PatchMapping("/updateOrder/{id}/orderStatus")
+    public ResponseEntity<OrderOutputDto> updateStatus(@PathVariable Long id, @RequestParam OrderStatus newOrderStatus) {
+        return new ResponseEntity<>(orderService.updateOrderStatus(id, newOrderStatus), HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}")

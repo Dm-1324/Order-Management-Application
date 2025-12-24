@@ -1,15 +1,13 @@
 package com.example.orderManagementApplication.mapper;
 
-import com.example.orderManagementApplication.dto.CouponDto;
-import com.example.orderManagementApplication.dto.OrderOutputDto;
-import com.example.orderManagementApplication.dto.UserInputDto;
-import com.example.orderManagementApplication.dto.UserOutputDto;
+import com.example.orderManagementApplication.dto.*;
 import com.example.orderManagementApplication.entity.Coupon;
 import com.example.orderManagementApplication.entity.Order;
 import com.example.orderManagementApplication.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,6 +60,7 @@ public class EntityDtoMapper {
                 .orderNumber(order.getOrderNumber())
                 .date(order.getDate())
                 .orderStatus(order.getOrderStatus())
+                .originalTotal(order.getOriginalTotal())
                 .totalAmount(order.getTotalAmount())
                 .userName(order.getUser() != null ? order.getUser().getName() : null)
                 .appliedCoupons(mapCouponsToDtos(order.getCoupons()))
@@ -75,5 +74,35 @@ public class EntityDtoMapper {
         return coupons.stream()
                 .map(this::toCouponDto)
                 .collect(Collectors.toSet());
+    }
+
+    private OrderPartialDto toOrderPartialDto(Order order) {
+        return OrderPartialDto.builder()
+                .id(order.getId())
+                .orderNumber(order.getOrderNumber())
+                .date(order.getDate())
+                .orderStatus(order.getOrderStatus())
+                .totalAmount(order.getTotalAmount())
+                .build();
+    }
+
+    public UserOrderDto toUserOrderDto(User user) {
+        if (user == null) return null;
+
+        List<OrderPartialDto> listOrderPartialDto;
+        if (user.getOrders() != null) {
+            listOrderPartialDto = user.getOrders().stream()
+                    .map(this::toOrderPartialDto)
+                    .toList();
+        } else {
+            listOrderPartialDto = Collections.emptyList();
+        }
+
+        return UserOrderDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .userStatus(user.getUserStatus())
+                .orderPartialDto(listOrderPartialDto)
+                .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.orderManagementApplication.controller;
 
 import com.example.orderManagementApplication.dto.UserInputDto;
+import com.example.orderManagementApplication.dto.UserOrderDto;
 import com.example.orderManagementApplication.dto.UserOutputDto;
 import com.example.orderManagementApplication.service.UserService;
 import jakarta.validation.Valid;
@@ -31,5 +32,10 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserOutputDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/{id}/orders-summary")
+    public ResponseEntity<UserOrderDto> getUserOrdersSummary(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserWithOrders(id));
     }
 }

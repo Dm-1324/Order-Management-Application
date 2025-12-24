@@ -33,6 +33,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    @NotNull(message = "Original price cannot be empty")
+    private BigDecimal originalTotal;
+
     @NotNull(message = "Order Amount cannot be empty")
     private BigDecimal totalAmount;
 

@@ -1,6 +1,7 @@
 package com.example.orderManagementApplication.service;
 
 import com.example.orderManagementApplication.dto.UserInputDto;
+import com.example.orderManagementApplication.dto.UserOrderDto;
 import com.example.orderManagementApplication.dto.UserOutputDto;
 import com.example.orderManagementApplication.entity.User;
 import com.example.orderManagementApplication.entity.enums.UserStatus;
@@ -46,5 +47,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream()
                 .map(entityDtoMapper::toUserOutputDto)
                 .toList();
+    }
+
+    @Override
+    public UserOrderDto getUserWithOrders(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        return entityDtoMapper.toUserOrderDto(user);
     }
 }

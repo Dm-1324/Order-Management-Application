@@ -2,6 +2,7 @@ package com.example.orderManagementApplication.service;
 
 import com.example.orderManagementApplication.dto.OrderInputDto;
 import com.example.orderManagementApplication.dto.OrderOutputDto;
+import com.example.orderManagementApplication.entity.enums.OrderStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface OrderService {
     OrderOutputDto getOrderById(Long id);
 
     List<OrderOutputDto> getOrdersByUserId(Long userId);
+
+    OrderOutputDto updateOrderStatus(Long id, OrderStatus newOrderStatus);
 }
